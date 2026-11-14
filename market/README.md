@@ -9,6 +9,14 @@ Read it from one of:
 
 In DSH, turn on `@deepseek-ai/dsh-experimental-plugin-market-bundle`, open **Plugins → Discover**, and add the URL under **Index sources**.
 
+A branch URL is cached by the CDN, so after publishing a new index call the purge endpoint and wait a few seconds:
+
+```sh
+curl -s https://purge.jsdelivr.net/gh/migubird/dsh-superagent-Windows@main/market/index.json
+```
+
+The raw GitHub URL is never cached, but it is often unreachable from mainland China.
+
 ## Adding a version
 
 1. Bump `version` in `package.json`, run `pnpm run build`, and commit both `package.json` and the rebuilt `lib/`.

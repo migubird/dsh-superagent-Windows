@@ -1,0 +1,67 @@
+{
+  "format": 1,
+  "title": {
+    "en": "migubird's DSH bundles",
+    "zh": "migubird 的 DSH 插件"
+  },
+  "description": {
+    "en": "Bundles maintained by migubird, starting with a Windows-capable dsh-superagent.",
+    "zh": "migubird 维护的 DSH 插件，第一个是支持原生 Windows 的 dsh-superagent。"
+  },
+  "metadata": {
+    "categories": {
+      "development": {
+        "title": { "en": "Development", "zh": "开发" }
+      }
+    },
+    "labels": {
+      "windows": {
+        "title": { "en": "Windows", "zh": "Windows" }
+      }
+    },
+    "sortKeys": {
+      "updated": {
+        "title": { "en": "Updated", "zh": "更新时间" },
+        "order": "desc"
+      }
+    }
+  },
+  "plugins": [
+    {
+      "name": "dsh-superagent",
+      "title": {
+        "en": "dsh-superagent (Windows fork)",
+        "zh": "dsh-superagent（Windows 版）"
+      },
+      "description": {
+        "en": "A proactive agent for one GitHub repository, packaged as a DSH bundle, with native Windows support: it listens to GitHub and optionally Feishu, turns authorized requests into Tickets, and runs each in its own DSH Session. Shows up as the Superagent entry in the sidebar.",
+        "zh": "面向单个 GitHub 仓库的主动式 agent，打包成 DSH 插件并支持原生 Windows：监听 GitHub（可选飞书），把获授权的请求变成 Ticket，并在各自的 DSH 会话里执行。安装后侧边栏出现 Superagent 入口。"
+      },
+      "author": "migubird",
+      "homepage": "https://github.com/migubird/dsh-superagent-Windows#readme",
+      "repository": {
+        "url": "https://github.com/migubird/dsh-superagent-Windows"
+      },
+      "metadata": {
+        "category": "development",
+        "labels": ["windows"],
+        "keywords": ["dsh", "github", "agent", "windows", "pull-request", "superagent"],
+        "sortKeys": { "updated": 1794636825 }
+      },
+      "versions": [
+        {
+          "version": "0.1.1",
+          "publishTimestamp": 1794636825,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/migubird/dsh-superagent-Windows",
+            "commit": "3f87cb21848665e5f182d00b5ab5ba7612ab3049"
+          },
+          "engines": {
+            "dsh": "^0.2.1-alpha.2 || ^0.2.2-rc.1"
+          }
+        }
+      ]
+    }
+  ]
+}

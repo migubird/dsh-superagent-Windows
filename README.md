@@ -29,6 +29,15 @@ dsh plugin --profile <profile> add dsh-superagent
 
 The same installs are available in the DSH plugin manager (Web: **Plugins → Install**). After installing into the running Web profile, reload the page: the sidebar then shows a hammer icon labelled **Superagent**.
 
+### From the plugin market
+
+This repository publishes a Discover index for the bundle:
+
+- Index URL: `https://cdn.jsdelivr.net/gh/migubird/dsh-superagent-Windows@main/market/index.json`
+- Mirror: `https://raw.githubusercontent.com/migubird/dsh-superagent-Windows/main/market/index.json`
+
+Turn on the experimental market bundle (`@deepseek-ai/dsh-experimental-plugin-market-bundle`), open **Plugins → Discover**, add one of those URLs under **Index sources**, and install the entry. The index pins an exact git commit, so no npm publication is needed; a later index version installed from the same repository shows as an update.
+
 Installing into your everyday profile also runs the plugin in that profile's process (see Security below). Upstream recommends a dedicated `superagent` profile, and this fork works there too.
 
 ## Configure
@@ -75,7 +84,7 @@ pnpm install
 pnpm check   # typecheck, tests, build
 ```
 
-`lib/` is ignored on purpose: the build output ships in the Release tarball, not in the repository.
+`lib/` is committed on purpose: the plugin market installs this package from a pinned git commit, and a git install runs no build step. Rebuild and commit `lib/` for every release.
 
 ## License and attribution
 

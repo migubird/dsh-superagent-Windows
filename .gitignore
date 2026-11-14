@@ -1,8 +1,9 @@
 node_modules/
-lib/
 .artifacts/
 .env
 coverage/
 .npm-cache/
 package-lock.json
 *.tgz
+# lib/ (the build output) is committed on purpose: the plugin market installs
+# this package from a pinned commit, and a git install runs no build step.

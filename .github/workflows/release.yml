@@ -1,0 +1,31 @@
+name: release
+
+# Pushing a tag like v0.1.0 builds the bundle and attaches the npm tarball to a
+# GitHub Release, which is what `dsh plugin add <tarball URL>` consumes.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm run build
+      - run: npm pack
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dsh-superagent-*.tgz
+          generate_release_notes: true

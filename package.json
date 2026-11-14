@@ -3,8 +3,15 @@
   "author": "DeepSeek Harness Team <team@dsh.dev>",
   "license": "MIT",
   "version": "0.1.0",
-  "private": true,
-  "description": "A proactive agent for one GitHub repository, as a DSH (DeepSeek Harness) bundle: it listens to GitHub and optionally Feishu, evaluates requests under a Policy, turns authorized ones into Tickets, and executes each in its own DSH Session.",
+  "description": "A proactive agent for one GitHub repository, as a DSH (DeepSeek Harness) bundle: it listens to GitHub and optionally Feishu, evaluates requests under a Policy, turns authorized ones into Tickets, and executes each in its own DSH Session. This fork adds native Windows support.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/migubird/dsh-superagent-Windows.git"
+  },
+  "homepage": "https://github.com/migubird/dsh-superagent-Windows#readme",
+  "bugs": {
+    "url": "https://github.com/migubird/dsh-superagent-Windows/issues"
+  },
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -52,7 +59,7 @@
   },
   "engines": {
     "node": "^22.19.0 || >=24.0.0",
-    "dsh": "^0.2.1-alpha.2"
+    "dsh": "^0.2.1-alpha.2 || ^0.2.2-rc.1"
   },
   "packageManager": "pnpm@11.7.0",
   "dependencies": {

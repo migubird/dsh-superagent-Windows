@@ -61,7 +61,8 @@ export function agentVariables(stateDir: string): Record<string, string | undefi
 /** True when a regular file starts with the dsh-superagent marker in its first two lines; a symbolic link, directory, or other non-regular file never counts as written by dsh-superagent. */
 async function written(file: string): Promise<boolean> {
   if (!(await lstat(file)).isFile()) return false
-  const head = (await readFile(file, 'utf8')).split('\n', 2)
+  // A Windows shim carries the marker as `rem <marker>`, because a batch file has no other comment form; strip that prefix and the CRLF ending before comparing.
+  const head = (await readFile(file, 'utf8')).split('\n', 2).map(line => line.trim().replace(/^rem\s+/iu, ''))
   return [MARKER, ...LEGACY_MARKERS].some(marker => head.includes(marker))
 }
 async function own(file: string, text: string, mode = 0o644): Promise<void> {

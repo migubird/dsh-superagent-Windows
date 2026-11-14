@@ -11,17 +11,26 @@
   "metadata": {
     "categories": {
       "development": {
-        "title": { "en": "Development", "zh": "开发" }
+        "title": {
+          "en": "Development",
+          "zh": "开发"
+        }
       }
     },
     "labels": {
       "windows": {
-        "title": { "en": "Windows", "zh": "Windows" }
+        "title": {
+          "en": "Windows",
+          "zh": "Windows"
+        }
       }
     },
     "sortKeys": {
       "updated": {
-        "title": { "en": "Updated", "zh": "更新时间" },
+        "title": {
+          "en": "Updated",
+          "zh": "更新时间"
+        },
         "order": "desc"
       }
     }
@@ -44,11 +53,34 @@
       },
       "metadata": {
         "category": "development",
-        "labels": ["windows"],
-        "keywords": ["dsh", "github", "agent", "windows", "pull-request", "superagent"],
-        "sortKeys": { "updated": 1794636825 }
+        "labels": [
+          "windows"
+        ],
+        "keywords": [
+          "dsh",
+          "github",
+          "agent",
+          "windows",
+          "pull-request",
+          "superagent"
+        ],
+        "sortKeys": {
+          "updated": 1794639017
+        }
       },
       "versions": [
+        {
+          "version": "0.1.2",
+          "publishTimestamp": 1794639017,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/migubird/dsh-superagent-Windows",
+            "commit": "9e5da4611078c272288ead6d44d605e81f2210d7"
+          },
+          "engines": {
+            "dsh": "^0.2.1-alpha.2 || ^0.2.2-rc.1"
+          }
+        },
         {
           "version": "0.1.1",
           "publishTimestamp": 1794636825,

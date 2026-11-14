@@ -40,15 +40,16 @@ afterEach(() => { rmSync(dir, { recursive: true, force: true }) })
 vi.setConfig({ testTimeout: 30_000 })
 
 describe('configuration schema', () => {
-  it('requires only the state directory and reads the editable fields through references', () => {
-    expect(() => Config({})).toThrow('stateDir')
+  it('defaults the state directory and rejects ones that are not absolute', () => {
+    // A profile may omit the directory; the plugin then keeps its state under DSH's own home.
+    expect(machineOf(Config({})).stateDir.endsWith(join('state', 'superagent'))).toBe(true)
     const read = machineOf(Config({ stateDir: join(dir, 'state') }))
     // Limits are volatile references that the loader updates in place and callers read when used.
     expect({ ...read, promptMaxChars: read.promptMaxChars.get(), admissionContextMaxPages: read.admissionContextMaxPages.get(),
       admissionContextTimeoutMs: read.admissionContextTimeoutMs.get() })
       .toEqual({ stateDir: join(dir, 'state'), promptMaxChars: 100000, admissionContextMaxPages: 10, admissionContextTimeoutMs: 15000 })
-    expect(() => Config(minimal({ stateDir: 'relative/dir' }))).toThrow()
-    expect(() => Config(minimal({ stateDir: '~/dir' }))).toThrow()
+    expect(() => machineOf(Config(minimal({ stateDir: 'relative/dir' })))).toThrow('absolute path')
+    expect(() => machineOf(Config(minimal({ stateDir: '~/dir' })))).toThrow('absolute path')
   })
   it('names keys the configuration does not define, and where the values of older keys live now', () => {
     const raw = minimal({ repository: 'acme/widgets', repositoryPath: '/srv/widgets', blockedCommands: [], author: { name: 'Alice' }, extra: 1 })

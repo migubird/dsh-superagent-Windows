@@ -12,6 +12,7 @@ import { SetupError } from '../setup.ts'
 import { CliError } from './commands.ts'
 
 const MARKER = '# Written by dsh-superagent on every start; edits are lost.'
+const WINDOWS = process.platform === 'win32'
 /** Markers of files written under the project's earlier names (`dsh-tag`, `dsh-go`, `dsh-freelancer`), which `dsh-superagent` owns and replaces too. */
 const LEGACY_MARKERS = ['dsh-tag', 'dsh-go', 'dsh-freelancer'].map(name => `# Written by ${name} on every start; edits are lost.`)
 /** Commands workers need, which `blockedCommands` cannot block: the shims and git. */
@@ -20,7 +21,7 @@ export const workerBin = (stateDir: string): string => join(stateDir, 'worker-bi
 export const workerGitConfig = (stateDir: string): string => join(stateDir, 'worker-gitconfig')
 const shellQuote = (value: string): string => `'${value.replaceAll("'", "'\\''")}'`
 const gitQuote = (value: string): string => `"${value.replace(/[\\"]/g, char => `\\${char}`)}"`
-export const credentialHelper = (cli: string): string => `!${shellQuote(cli)} auth git-credential`
+export const credentialHelper = (cli: string): string => `!${shellQuote(WINDOWS ? cli.replaceAll('\\', '/') : cli)} auth git-credential`
 
 export function sameDirectory(a: string, b: string): boolean {
   const real = (path: string): string => { try { return realpathSync(path) } catch { return resolve(path) } }
@@ -84,19 +85,33 @@ export async function writeEnvironment(deployment: Pick<Deployment, 'stateDir' |
   for (const name of before) { const file = join(dir, name); if (!await written(file)) throw new SetupError('foreignFile', { file }) }
   // Workers may be running concurrently: write each shim to a temp file and atomically rename it so no command ever resolves past the shim directory.
   const kept = new Set<string>()
-  const shim = async (name: string, body: string): Promise<void> => {
-    const temporary = join(dir, `.${name}.${process.pid}.tmp`)
-    await writeFile(temporary, `#!/bin/sh\n${MARKER}\n${body}\n`, { mode: 0o755 })
-    await rename(temporary, join(dir, name))
-    kept.add(name)
+  // A shim the platform can run: a `#!/bin/sh` script elsewhere, a batch file on Windows (whose PATH lookup needs the `.cmd` suffix).
+  const shim = async (name: string, body: { posix: string; windows: string }): Promise<void> => {
+    const file = WINDOWS ? `${name}.cmd` : name
+    const temporary = join(dir, `.${file}.${process.pid}.tmp`)
+    const text = WINDOWS ? `@echo off\r\nrem ${MARKER}\r\n${body.windows}\r\n` : `#!/bin/sh\n${MARKER}\n${body.posix}\n`
+    await writeFile(temporary, text, { mode: 0o755 })
+    await rename(temporary, join(dir, file))
+    kept.add(file)
   }
   const withoutShims = [
     `self=${shellQuote(dir)}`, 'rest=', 'IFS=:', 'set -f',
     'for entry in $PATH; do [ "$entry" = "$self" ] || rest="${rest:+$rest:}$entry"; done',
     'set +f', 'unset IFS', 'PATH=$rest', 'export PATH',
   ].join('\n')
-  const run = (program: string): string => `${withoutShims}\nexec ${shellQuote(program)} "$@"`
-  const fail = (message: string): string => `echo ${shellQuote(message)} >&2\nexit 1`
+  const run = (program: string): { posix: string; windows: string } => ({
+    posix: `${withoutShims}\nexec ${shellQuote(program)} "$@"`,
+    // `%~dp0` is the shim directory with a trailing separator; `%~fP` resolves a PATH entry without one.
+    windows: [
+      'setlocal', 'set "dshshim=%~dp0"', 'set "dshshim=%dshshim:~0,-1%"', 'set "rest="',
+      'for %%P in ("%PATH:;=" "%") do if /i not "%%~fP"=="%dshshim%" set "rest=%%~P;%rest%"',
+      'set "PATH=%rest%"', `call "${program}" %*`, 'exit /b %errorlevel%',
+    ].join('\r\n'),
+  })
+  const fail = (message: string): { posix: string; windows: string } => ({
+    posix: `echo ${shellQuote(message)} >&2\nexit 1`,
+    windows: `>&2 echo ${message.replace(/[&|<>^()]/g, char => `^${char}`)}\r\nexit /b 1`,
+  })
   await shim('gh', run(github.cli))
   await shim('lark-cli', feishu ? run(feishu.cli) : fail('lark-cli is unavailable: this installation has no Feishu bot.'))
   for (const name of new Set(blockedCommands.filter(name => !WORKER_COMMANDS.includes(name)))) {

@@ -18,7 +18,7 @@ Pick one, in the DSH profile that should run the agent:
 
 ```sh
 # From a Release tarball
-dsh plugin --profile <profile> add https://github.com/migubird/dsh-superagent-Windows/releases/download/v0.1.0/dsh-superagent-0.1.0.tgz
+dsh plugin --profile <profile> add https://github.com/migubird/dsh-superagent-Windows/releases/download/v0.1.3/dsh-superagent-0.1.3.tgz
 
 # From a local checkout (build it first: pnpm install && pnpm build)
 dsh plugin --profile <profile> add "link:<absolute checkout path>"
